@@ -8,6 +8,7 @@ public class Board implements Common{
 	private int masu;
 	private int mine;
 	private int game_state;
+	private int open_masu_num;
 
 	/*
 	 * Board（盤面）クラスのコンストラクタ
@@ -21,38 +22,38 @@ public class Board implements Common{
 		this.setMasu(masu);
 		this.mine = mine;
 		game_state = GAME;
+		open_masu_num = 0;
+
 		initBoard();
 	}
 
 	/*
 	 * Board（盤面）の初期化、地雷の配置を行う
 	 */
-	public void initBoard(){
+	private void initBoard(){
 		board = new Square[this.getMasu() * this.getMasu()];
 
 		//盤面の初期化と地雷を必要数分配置
 		for(int y = 0;y < getMasu();y++){
 			for(int x = 0;x < getMasu();x++){
-				// 0~地雷必要数分の個数なら配置
+				// 0~（地雷必要数分）の個数なら配置
 				// 配置が完了しているなら地雷は置かない
-				if(((y * getMasu()) + x) < mine){
-					board[(y * getMasu()) + x] = new Square(MY_WIDTH / getMasu(),true);
+				if((toOneDimention(y,x)) < mine){
+					board[toOneDimention(y,x)] = new Square(MY_WIDTH / getMasu(),true);
 				}else{
-					board[(y * getMasu()) + x] = new Square(MY_WIDTH / getMasu(),false);
+					board[toOneDimention(y,x)] = new Square(MY_WIDTH / getMasu(),false);
 				}
 			}
 		}
-
 		// 盤面をシャッフルすることによって爆弾をランダム配置
 		shuffleBoard();
-
+		// デバッグ用
 		disp();
 		System.out.println();
-
 		// 爆弾のあるマスを探してその周囲のマスの隣接爆弾数のカウントを＋1する
 		for(int y = 0;y < getMasu();y++){
 			for(int x = 0;x < getMasu();x++){
-				if((board[(y * getMasu()) + x].getMineExist())){
+				if((board[toOneDimention(y,x)].getMineExist())){
 					checkAroundMine(y,x);
 				}
 			}
@@ -65,10 +66,8 @@ public class Board implements Common{
 	private void shuffleBoard(){
 		// 配列からListへ変換する
 	    List<Square> list = Arrays.asList(board);
-
 	    // リストの並びをシャッフする
 	    Collections.shuffle(list);
-
 	    // listから配列へ戻する
 	    board =(Square[])list.toArray(new Square[list.size()]);
 	}
@@ -89,12 +88,11 @@ public class Board implements Common{
 			// 周囲のマスの座標を計算し一時的に保持
 			tmp_y = y + offset[i][1];
 			tmp_x = x + offset[i][0];
-
 			// 上で計算した座標が正方形盤面内に存在することを確かめ、
 			// その座標の周囲の爆弾の数を1増やす
 			if(checkArea(tmp_y,tmp_x)){
-				tmp_num = (board[((tmp_y * getMasu()) + tmp_x)].getAroundMineNum()) + 1;
-				board[((tmp_y * getMasu()) + tmp_x)].setAroundMineNum(tmp_num);
+				tmp_num = (board[toOneDimention(tmp_y,tmp_x)].getAroundMineNum()) + 1;
+				board[toOneDimention(tmp_y,tmp_x)].setAroundMineNum(tmp_num);
 			}
 		}
 	}
@@ -104,9 +102,8 @@ public class Board implements Common{
 	 * 存在すればtrueを存在しなければfalseを返す
 	 */
 	private boolean checkArea(int y,int x){
-
 		if(y >= 0 && x >= 0 && y < getMasu() && x < getMasu() ){
-			if(!(board[(y * getMasu()) + x].getMineExist())){
+			if(!(board[toOneDimention(y,x)].getMineExist())){
 				return true;
 			}
 		}
@@ -117,7 +114,12 @@ public class Board implements Common{
 	 * 指定された座標を開く
 	 */
 	public void openMasu(int y,int x){
-		board[(y * getMasu()) + x].setOpen(true);
+		board[toOneDimention(y,x)].setOpen(true);
+		open_masu_num++;
+		if(open_masu_num >= (masu*masu) - mine){
+			game_state = CLEAR;
+		}
+		System.out.println(open_masu_num);
 	}
 
 	/*
@@ -126,7 +128,7 @@ public class Board implements Common{
 	public void openAllMasu(){
 		for(int y = 0;y < getMasu();y++){
 			for(int x = 0;x < getMasu();x++){
-				board[(y * getMasu()) + x].setOpen(true);
+				board[toOneDimention(y,x)].setOpen(true);
 			}
 		}
 		game_state = GAMEOVER;
@@ -142,22 +144,27 @@ public class Board implements Common{
 							{1,-1} , {1,0}, {1,1}};
 		int tmp_y,tmp_x;
 
-		openMasu(y,x);
-		if(board[(y * getMasu()) + x].getAroundMineNum() == 0){
-
+		openMasu(y,x);//指定されたマスを開く
+		if(board[toOneDimention(y,x)].getAroundMineNum() == 0){
 			for(int i = 0;i < 8;i++){
 				// 周囲のマスの座標を計算し一時的に保持
 				tmp_y = y + offset[i][1];
 				tmp_x = x + offset[i][0];
-
-					if(checkArea(tmp_y,tmp_x) && !(board[(tmp_y * getMasu()) + tmp_x].getOpen())){
-						openEmptyMasu(tmp_y,tmp_x);
-					}
+				// 空のマスを連鎖的に開く処理（再帰）
+				if(checkArea(tmp_y,tmp_x) && !(board[toOneDimention(tmp_y,tmp_x)].getOpen())){
+					openEmptyMasu(tmp_y,tmp_x);
+				}
 			}
 			return;
 		}
-
 		return;
+	}
+
+	/*
+	 * 二次元配列的考えを一次元配列敵考えにする
+	 */
+	private int toOneDimention(int y,int x){
+		return ((y * getMasu()) + x);
 	}
 
 	/*
@@ -168,21 +175,27 @@ public class Board implements Common{
 	public void drawBoard(Graphics g) {
         for (int y = 0; y < getMasu(); y++) {
             for (int x = 0; x < getMasu(); x++) {
-            	board[(y * getMasu()) + x].draw(g,y,x);
+            	board[toOneDimention(y,x)].draw(g,y,x);
             }
         }
-        disp();
+        //disp();
     }
 
+	/*
+	 * コンソール表示用メソッド（デバッグ用）
+	 */
 	private void disp(){
 		for (int y = 0; y < getMasu(); y++) {
             for (int x = 0; x < getMasu(); x++) {
-            	System.out.print(board[(y * getMasu()) + x].getAroundMineNum() + ",");
+            	System.out.print(board[toOneDimention(y,x)].getAroundMineNum() + ",");
             }
             System.out.println();
         }
 	}
 
+	/*-----------------------------------------------------
+	 * 各変数のgetter,setterを以下に記述
+	 -----------------------------------------------------*/
 	public int getMasu() {
 		return masu;
 	}

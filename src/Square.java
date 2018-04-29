@@ -10,10 +10,20 @@ public class Square implements Common{
 	private boolean open;
 	private boolean flack;
 
-	private int cell_size;
-	/*private int coordinate_y;
-	private int coordinate_x;*/
+	private  int cell_size;
 
+	/*
+	 * 文字などを描画する際の表示位置を決めるメソッド
+	 */
+	private int pointX(int x){ return x * cell_size;}
+	private int pointY(int y){ return y * cell_size;}
+	private int offsetX(){return (cell_size/2)/2;}
+	private int offsetY(){return (cell_size) - cell_size/2;}
+
+
+	/*
+	 * Squareクラスのコンストラクタ
+	 */
 	public Square(int cs,boolean mine_exist){
 		this.cell_size = cs;
 		this.mine_exist = mine_exist;
@@ -30,35 +40,52 @@ public class Square implements Common{
 		}
 	}
 
+	/*
+	 * 描画メソッド
+	 */
 	public void draw(Graphics g,int y,int x){
         if(open){
-        	g.setColor(Color.white);
-            g.fillRect(x * cell_size, y * cell_size, cell_size, cell_size);
+        	// マス目が開いている時の描画
+        	myFillRect(g,Color.white,y,x);
         	if(mine_exist){
             	mine.drawMine(g,y,x);
             }else if(around_mine_num != 0){
-            	g.setColor(Color.red);
-            	g.setFont(new Font("Arial",Font.BOLD, 20));
-            	g.drawString(String.valueOf(around_mine_num), x * cell_size + (cell_size/2)/2,
-            			y * cell_size + (cell_size) -cell_size/2);
+            	myDrawString(g,Color.red,String.valueOf(around_mine_num),y,x);
             }
         }else{
-        	g.setColor(Color.gray);
-            g.fillRect(x * cell_size, y * cell_size, cell_size, cell_size);
-
+        	// マスが開いていないときの描画
+        	myFillRect(g,Color.gray,y,x);
             if(flack){
-            	g.setColor(Color.yellow);
-                g.fillRect(x * cell_size, y * cell_size, cell_size, cell_size);
-            	g.setColor(Color.blue);
-            	g.setFont(new Font("Arial",Font.BOLD, 20));
-            	g.drawString("!!!", x * cell_size + (cell_size/2)/2,
-            			y * cell_size + (cell_size) -cell_size/2);
+            	// マスにFlackを立てた時の描画
+                myFillRect(g,Color.yellow,y,x);
+            	myDrawString(g,Color.blue,"F",y,x);
             }
         }
+        // 縁の描画
         g.setColor(Color.lightGray);
-    	g.drawRect(x * cell_size, y * cell_size, cell_size, cell_size);
+    	g.drawRect(pointX(x), pointY(y), cell_size, cell_size);
 	}
 
+	/*
+	 * 文字列を指定位置、指定色で描画するメソッド
+	 */
+	private void myDrawString(Graphics g,Color c,String str,int y,int x){
+		g.setColor(c);
+    	g.setFont(new Font("Arial",Font.BOLD, cell_size/2));
+    	g.drawString(str, pointX(x) + offsetX(),pointY(y) + offsetY());
+	}
+
+	/*
+	 * 四角を塗りつぶして、指定座標に描画するメソッド
+	 */
+	private void myFillRect(Graphics g,Color c,int y,int x){
+		g.setColor(c);
+        g.fillRect(pointX(x), pointY(y), cell_size, cell_size);
+	}
+
+	/*--------------------------------------------------------
+	 * 各変数のsetter,getterを以下に記述
+	 *-------------------------------------------------------*/
 	public void setAroundMineNum(int num){
 		this.around_mine_num = num;
 	}
