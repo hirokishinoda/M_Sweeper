@@ -24,12 +24,12 @@ public class StartScreenPanel extends JPanel implements MouseListener,Common{
 	public StartScreenPanel(MainFrame mf){
 		this.mf = mf;
 		my_file = new MyFile();
-
+		// スコアファイルの読み込み
 		my_file.readFile();
 		// レイアウトを無効
 		setLayout(null);
 		// 背景色を設定
-		setBackground(Color.white);
+		setBackground(Color.black);
 		// ボタンを作成し、パネルに追加
         addActionToButton();
         // パネルの大きさの設定
@@ -42,21 +42,23 @@ public class StartScreenPanel extends JPanel implements MouseListener,Common{
 	public void paintComponent(Graphics g){
 		 super.paintComponent(g);
 		 // タイトル「M_Sweeper!!!」表示の設定（色、フォント、大きさ、表示位置）と描画
-		 myDrawString(g,Color.black,"M_Sweeper!!!", TITLE_Y, TITLE_X , 50);
+		 myDrawString(g,Color.white,"M_Sweeper!!!", TITLE_Y, TITLE_X , 50);
+		 myDrawString(g,Color.lightGray,"[Select Mode]", SELECT_MODE_Y, SELECT_MODE_X, 25);
+		 myDrawString(g,Color.lightGray,"[Best Scores]", BEST_SCORES_Y, BEST_SCORES_X, 25);
 		 // 各種スコアの表示
 		 drawScoreBoard(g);
 	}
 
 	private void drawScoreBoard(Graphics g){
 		//9×9の最短クリアタイム表示
-		myDrawString(g,Color.black,"[9×9]Best TIME", SCORE_9_Y , SCORE_X , 20);
-		myDrawString(g,Color.black,my_file.array[0] + "seconds", SCORE_9_Y + 20, SCORE_X, 20);
+		myDrawString(g,Color.white,"[9×9]Best TIME", SCORE_9_Y , SCORE_X , 20);
+		myDrawString(g,Color.lightGray,my_file.array[0] + " seconds", SCORE_9_Y + 30, SCORE_X, 20);
 		//16×16の最短クリアタイム表示
-		myDrawString(g,Color.black,"[16×16]Best TIME" , SCORE_16_Y , SCORE_X , 20);
-		myDrawString(g,Color.black,my_file.array[1] + "seconds", SCORE_16_Y + 20, SCORE_X, 20);
+		myDrawString(g,Color.white,"[16×16]Best TIME" , SCORE_16_Y , SCORE_X , 20);
+		myDrawString(g,Color.lightGray,my_file.array[1] + " seconds", SCORE_16_Y + 30, SCORE_X, 20);
 		//32×32の最短クリアタイム表示
-		myDrawString(g,Color.black,"[32×32]Best TIME" , SCORE_32_Y , SCORE_X, 20);
-		myDrawString(g,Color.black,my_file.array[2] + "seconds", SCORE_32_Y + 20, SCORE_X, 20);
+		myDrawString(g,Color.white,"[32×32]Best TIME" , SCORE_32_Y , SCORE_X, 20);
+		myDrawString(g,Color.lightGray,my_file.array[2] + " seconds", SCORE_32_Y + 30, SCORE_X, 20);
 	}
 
 	/*
@@ -132,6 +134,8 @@ class SelectButton extends JButton implements Common{
 	public SelectButton(String name,int y,int x){
 		// 表示する文字の設定
 		setText(name);
+		// 色設定
+		//this.setBackground(Color.);
 		// マウスによるフォーカスを許可しない
 		setFocusPainted(false);
 		// 表示位置、大きさの設定

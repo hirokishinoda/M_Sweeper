@@ -114,8 +114,10 @@ public class Board implements Common{
 	 * 指定された座標を開く
 	 */
 	public void openMasu(int y,int x){
-		board[toOneDimention(y,x)].setOpen(true);
-		open_masu_num++;
+		if(!board[toOneDimention(y,x)].getOpen()){
+			board[toOneDimention(y,x)].setOpen(true);
+			open_masu_num++;
+		}
 		if(open_masu_num >= (masu*masu) - mine){
 			game_state = CLEAR;
 		}

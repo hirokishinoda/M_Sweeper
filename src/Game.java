@@ -46,9 +46,14 @@ public class Game implements Common{
 		}
 	}
 
+	/*
+	 * タイムを比較して最速タイムを配列に格納
+	 * 記録が更新されたら書き込み許可（True）を返す
+	 */
 	private boolean comparateTime(){
 		int index;
 
+		// マスの数（モード）に応じた配列番号を決定
 		switch(board.getMasu()){
 		case 9:
 			index = 0;
@@ -63,10 +68,11 @@ public class Game implements Common{
 			return false;
 		}
 
-		if(my_file.array[index] == "No Data."){
+		if(my_file.array[index] == "----"){ // 記録がなければ更新
 			my_file.array[index] = String.valueOf(timer.getTime());
 			return true;
 		}else{
+			 // 現在の最速タイムと比較して、今回のタイムが早ければ更新
 			if(timer.getTime() < Integer.parseInt(my_file.array[index])){
 				my_file.array[index] = String.valueOf(timer.getTime());
 				return true;
@@ -100,6 +106,11 @@ public class Game implements Common{
 			timer.draw(g,true);
 		}
 	}
+
+	/*
+	 * ゲームモードの描画
+	 */
+
 
 	/*
 	 * 盤面（ゲーム内）の状態を取得するメソッド

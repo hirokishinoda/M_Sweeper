@@ -57,8 +57,11 @@ public class MainPanel extends JPanel implements Common,MouseListener,Runnable{
 		if(btn == MouseEvent.BUTTON1){
 			int x = calcPointX(e.getX());// マウス座標からマスの位置を計算
 			int y = calcPointY(e.getY());// マウス座標からマスの位置を計算
-			// ゲーム内の左クリック処理
-			game.clickLeft(y,x);
+
+			if(x < masu && y < masu){
+				// ゲーム内の左クリック処理
+				game.clickLeft(y,x);
+			}
 			// ゲーム内の状態に応じた画面遷移の処理
 			if(game.getGameState() == GAMEOVER){
 				mf.state = MENU;
@@ -70,9 +73,12 @@ public class MainPanel extends JPanel implements Common,MouseListener,Runnable{
 		if(btn == MouseEvent.BUTTON3){
 			int x = calcPointX(e.getX());// マウス座標からマスの位置を計算
 			int y = calcPointY(e.getY());// マウス座標からマスの位置を計算
-			// ゲーム内の右ククリック処理
-			game.clickRight(y,x);
+			if(x < masu && y < masu){
+				// ゲーム内の右ククリック処理
+				game.clickRight(y,x);
+			}
 		}
+		repaint();
 	}
 
 	@Override
@@ -93,7 +99,7 @@ public class MainPanel extends JPanel implements Common,MouseListener,Runnable{
 
 	// 指定座標からマス目のY座標を計算するメソッド
 	private int calcPointY(int y){
-		return y /= MY_HEIGHT / masu;
+		return y /= (MY_HEIGHT - HEIGHT_MARGIN) / masu;
 	}
 
 	// 指定座標からマス目のX座標を計算するメソッド
