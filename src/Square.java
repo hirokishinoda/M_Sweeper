@@ -83,9 +83,9 @@ public class Square implements Common{
         g.fillRect(pointX(x), pointY(y), cell_size, cell_size);
 	}
 
-	/*--------------------------------------------------------
+	/*----------------------------------
 	 * 各変数のsetter,getterを以下に記述
-	 *-------------------------------------------------------*/
+	 *--------------------------------*/
 	public void setAroundMineNum(int num){
 		this.around_mine_num = num;
 	}

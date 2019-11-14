@@ -1,8 +1,8 @@
 
 public interface Common {
-	// 画面の大きさ定数
-	public static final int HEIGHT_MARGIN = 50;
-	public static final int MY_WIDTH = 640;
+    // 画面の大きさ定数
+    public static final int HEIGHT_MARGIN = 50;
+    public static final int MY_WIDTH = 640;
     public static final int MY_HEIGHT = MY_WIDTH + HEIGHT_MARGIN;
     // メニュー画面の定数
     public static final int TITLE_X = MY_WIDTH/2 - MY_WIDTH/2/2;

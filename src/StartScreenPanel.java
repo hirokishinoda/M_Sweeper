@@ -10,7 +10,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class StartScreenPanel extends JPanel implements MouseListener,Common{
+public class StartScreenPanel extends JPanel implements Common{
 	MainFrame mf;
 	private MyFile my_file;
 	private SelectButton masu9_btn = new SelectButton("9×9マス,Mine 10",BUTTON_9_Y,BUTTON_X);
@@ -68,26 +68,6 @@ public class StartScreenPanel extends JPanel implements MouseListener,Common{
 		g.setColor(c);
     	g.setFont(new Font("Arial",Font.BOLD, str_size));
     	g.drawString(str, x, y);
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
 	}
 
 	/*
